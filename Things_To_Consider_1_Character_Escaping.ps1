@@ -27,3 +27,4 @@ if ($SeparateWindow) {
     & "$(Join-Path -Path $BinaryPath -ChildPath $BinaryExecutable)" $Arguments
 }
 '
+$String
