@@ -1,12 +1,14 @@
-#Bad Indentation
+########################################################################################################################
+#Proper input indentation and bad output indentation
+########################################################################################################################
 Write-Verbose 'Generating the real function code'
 [System.Collections.ArrayList]$FunctionCode = @() #Use an arraylist for efficiency/performance of the code generation
 
 Write-Verbose 'Generate the base function code and make it an advanced function'
-$FunctionCode.Add("
+[void]$FunctionCode.Add("
     function Invoke-SomethingBinary {
     #Heres a comment
-") | Out-Null
+")
 
 #Generate the code for the process block
 $String = '
@@ -19,21 +21,24 @@ $String = '
     if ($OptionalParameter2) {
         $Arguments.Add("$($OptionalParameter2)") | Out-Null
     }
+}
 '
     
 Write-Verbose 'Generate the process block'
-$FunctionCode.Add($String) | Out-Null
+[void]$FunctionCode.Add($String)
 
 $FunctionCode | clip
 
+########################################################################################################################
 #Proper Indentation
+########################################################################################################################
 Write-Verbose 'Generating the real function code'
 [System.Collections.ArrayList]$FunctionCode = @() #Use an arraylist for efficiency/performance of the code generation
 
 Write-Verbose 'Generate the base function code and make it an advanced function'
-$FunctionCode.Add("function Invoke-SomethingBinary {
+[void]$FunctionCode.Add("function Invoke-SomethingBinary {
 #Heres a comment
-") | Out-Null
+")
 
 #Generate the code for the process block
 $String = '    [System.Collections.ArrayList]$Arguments = @()
@@ -49,7 +54,7 @@ $String = '    [System.Collections.ArrayList]$Arguments = @()
 '
     
 Write-Verbose 'Generate the process block'
-$FunctionCode.Add($String) | Out-Null
+[void]$FunctionCode.Add($String)
 
 $FunctionCode | clip
 
