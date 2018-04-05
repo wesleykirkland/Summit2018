@@ -1,6 +1,7 @@
 #This will auto build the Domain Component of the LDAP Path, or you could change it yourself
-$DomainDC = ($Env:USERDNSDOMAIN.ToLower().split('.') | foreach {"DC=$PSItem"}) -join ','
+$DomainDC = ($Env:USERDNSDOMAIN.ToLower().split('.') | ForEach-Object {"DC=$PSItem"}) -join ','
 #$DomainDC = 'DC=contoso,DC=com'
+$ProtectedFromAccidentalDeletion = $false #Specify the the code below should protect it from accidental deletion, changeable in the script later
 
 $OUs = Get-ADOrganizationalUnit -Filter * |
     Select-Object DistinguishedName,
@@ -11,6 +12,7 @@ $OUs = Get-ADOrganizationalUnit -Filter * |
 
 [System.Collections.ArrayList]$FileGeneration = @()
 
+[void]$FileGeneration.Add("$('$ProtectedFromAccidentalDeletion') = $(@('$',$ProtectedFromAccidentalDeletion) -join(''))")
 foreach ($OU in $OUs) {
     #if (!(Get-ADOrganizationalUnit -Identity $OU.DistinguishedName)) {
     $OUPath = "$(
@@ -23,7 +25,7 @@ foreach ($OU in $OUs) {
             $($DomainDC)
         }
     )"
-    [void]$FileGeneration.Add("New-ADOrganizationalUnit -Name $($OU.Name) -Path '$OUPath' -ProtectedFromAccidentalDeletion $true -ErrorAction SilentlyContinue")
+    [void]$FileGeneration.Add("New-ADOrganizationalUnit -Name $($OU.Name) -Path '$OUPath' -ProtectedFromAccidentalDeletion $ProtectedFromAccidentalDeletion -ErrorAction SilentlyContinue")
     #}
 }
 
