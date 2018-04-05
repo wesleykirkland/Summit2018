@@ -26,3 +26,5 @@ foreach ($OU in $OUs) {
     [void]$FileGeneration.Add("New-ADOrganizationalUnit -Name $($OU.Name) -Path '$OUPath' -ProtectedFromAccidentalDeletion $true -ErrorAction SilentlyContinue")
     #}
 }
+
+$FileGeneration | Out-File C:\temp\meta\output\OU_Rebuild.ps1 -Force
