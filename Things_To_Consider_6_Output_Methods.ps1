@@ -23,7 +23,7 @@ $ArrayListMeasure = Measure-Command {
 
     foreach ($Num in 1..5000) {
         $string = 'Write-Host -ForegroundColor {0} -BackgroundColor {1} {2}' -f ($Colors | Get-Random),($Colors | Get-Random),$Num
-        $ArrayList.Add($string) |  Out-Null
+        $ArrayList.Add($string) | Out-Null
     }
 }
 $ArrayListMeasure | Select-Object @{Name='Type';Expression={'ArrayList'}},Seconds,Milliseconds
