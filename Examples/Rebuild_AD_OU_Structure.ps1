@@ -1,5 +1,7 @@
+#Global variables
 $ProtectedFromAccidentalDeletion = $false #Specify the the code below should protect it from accidental deletion, changeable in the script later
 
+#Build OU structure with custom path
 $OUs = Get-ADOrganizationalUnit -Filter * |
     Where-Object Name -NotMatch "Domain Controllers" |
     Select-Object DistinguishedName,
@@ -10,14 +12,15 @@ $OUs = Get-ADOrganizationalUnit -Filter * |
 
 [System.Collections.ArrayList]$FileGeneration = @()
 
+#Build variables output
 [void]$FileGeneration.Add('#Variable to control Accidental Deletion')
 [void]$FileGeneration.Add("$('$ProtectedFromAccidentalDeletion') = $(@('$',$ProtectedFromAccidentalDeletion) -join(''))")
 [void]$FileGeneration.Add('#Variable to control base DC path')
 [void]$FileGeneration.Add("$('$DomainDC') = $($(@('$($Env:USERDNSDOMAIN.ToLower().split(''.'') | ForEach-Object {"DC=$PSItem"}) -join '',''')))")
 [void]$FileGeneration.Add('')
 
+#Loop through OUs and build output file
 foreach ($OU in $OUs) {
-    #if (!(Get-ADOrganizationalUnit -Identity $OU.DistinguishedName)) {
     $OUPath = "$(
         if (!([string]::IsNullOrWhiteSpace($OU.Path))) {
             @(
@@ -29,7 +32,7 @@ foreach ($OU in $OUs) {
         }
     )"
     [void]$FileGeneration.Add("New-ADOrganizationalUnit -Name '$($OU.Name)' -Path ""$OUPath"" -ProtectedFromAccidentalDeletion $('$ProtectedFromAccidentalDeletion') -ErrorAction SilentlyContinue")
-    #}
 }
 
+#Store the output file
 $FileGeneration | Out-File C:\temp\meta\output\OU_Rebuild.ps1 -Force
