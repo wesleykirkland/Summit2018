@@ -1,10 +1,7 @@
-#This will auto build the Domain Component of the LDAP Path, or you could change it yourself
-#$DomainDC = ($Env:USERDNSDOMAIN.ToLower().split('.') | ForEach-Object {"DC=$PSItem"}) -join ','
-$DomainDC = 'DC=demo1,DC=local'
 $ProtectedFromAccidentalDeletion = $false #Specify the the code below should protect it from accidental deletion, changeable in the script later
 
 $OUs = Get-ADOrganizationalUnit -Filter * |
-    Where-Object Name -NotMatch "Domain Controllers"
+    Where-Object Name -NotMatch "Domain Controllers" |
     Select-Object DistinguishedName,
         Name,
         @{Name='Depth';Expression={$PSItem.DistinguishedName.Split(',').Length}},
@@ -13,20 +10,25 @@ $OUs = Get-ADOrganizationalUnit -Filter * |
 
 [System.Collections.ArrayList]$FileGeneration = @()
 
+[void]$FileGeneration.Add('#Variable to control Accidental Deletion')
 [void]$FileGeneration.Add("$('$ProtectedFromAccidentalDeletion') = $(@('$',$ProtectedFromAccidentalDeletion) -join(''))")
+[void]$FileGeneration.Add('#Variable to control base DC path')
+[void]$FileGeneration.Add("$('$DomainDC') = $($(@('$($Env:USERDNSDOMAIN.ToLower().split(''.'') | ForEach-Object {"DC=$PSItem"}) -join '',''')))")
+[void]$FileGeneration.Add('')
+
 foreach ($OU in $OUs) {
     #if (!(Get-ADOrganizationalUnit -Identity $OU.DistinguishedName)) {
     $OUPath = "$(
         if (!([string]::IsNullOrWhiteSpace($OU.Path))) {
             @(
                 $($OU.Path)
-                $($DomainDC)
+                '$($DomainDC)'
             ) -join ','
         } else {
-            $($DomainDC)
+            '$($DomainDC)'
         }
     )"
-    [void]$FileGeneration.Add("New-ADOrganizationalUnit -Name '$($OU.Name)' -Path '$OUPath' -ProtectedFromAccidentalDeletion $('$ProtectedFromAccidentalDeletion') -ErrorAction SilentlyContinue")
+    [void]$FileGeneration.Add("New-ADOrganizationalUnit -Name '$($OU.Name)' -Path ""$OUPath"" -ProtectedFromAccidentalDeletion $('$ProtectedFromAccidentalDeletion') -ErrorAction SilentlyContinue")
     #}
 }
 
