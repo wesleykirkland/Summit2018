@@ -1,0 +1,3 @@
+[submodule "PowerShell_Meta_Programming"]
+	path = PowerShell_Meta_Programming
+	url = https://github.com/wesleykirkland/PowerShell_Meta_Programming
