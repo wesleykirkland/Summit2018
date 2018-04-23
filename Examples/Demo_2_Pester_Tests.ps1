@@ -1,6 +1,6 @@
 $ExecutionTime = Measure-Command -Expression {
     #Get all the cmdlets in a module
-    $ModuleToBuildTests = 'AWSPowerShell'
+    $ModuleToBuildTests = 'FailoverClusters'
     [System.Collections.ArrayList]$arrayfile = @() #Build an emplty file for us to store LOC to
 
     #Base coded neested for the Pester test
