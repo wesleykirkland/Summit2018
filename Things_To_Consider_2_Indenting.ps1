@@ -15,11 +15,11 @@ $String = '
     [System.Collections.ArrayList]$Arguments = @()
     #To Do, loop through all the optional parameters and maybe even make them dynamic for an unlimited number
     if ($OptionalParameter1) {
-        $Arguments.Add("$($OptionalParameter1)") | Out-Null
+        [void]$Arguments.Add("$($OptionalParameter1)")
     }
 
     if ($OptionalParameter2) {
-        $Arguments.Add("$($OptionalParameter2)") | Out-Null
+        [void]$Arguments.Add("$($OptionalParameter2)")
     }
 }
 '
@@ -37,24 +37,25 @@ Write-Verbose 'Generating the real function code'
 
 Write-Verbose 'Generate the base function code and make it an advanced function'
 [void]$FunctionCode.Add("function Invoke-SomethingBinary {
-#Heres a comment
-")
+    #Heres a comment")
 
 #Generate the code for the process block
 $String = '    [System.Collections.ArrayList]$Arguments = @()
 
     #To Do, loop through all the optional parameters and maybe even make them dynamic for an unlimited number
     if ($OptionalParameter1) {
-        $Arguments.Add("$($OptionalParameter1)") | Out-Null
+        [void]$Arguments.Add("$($OptionalParameter1)")
     }
 
     if ($OptionalParameter2) {
-        $Arguments.Add("$($OptionalParameter2)") | Out-Null
-    }
-'
+        [void]$Arguments.Add("$($OptionalParameter2)")
+    }'
     
 Write-Verbose 'Generate the process block'
 [void]$FunctionCode.Add($String)
+
+Write-Verbose 'Terminate everything'
+[void]$FunctionCode.Add('}')
 
 $FunctionCode | clip
 
@@ -98,12 +99,12 @@ MERGE INTO $($Target) WITH (READPAST) AS Target
 USING $($Target)_$($UniqueIdentifier)_TEMP AS Source
 ON Target.[$($PrimaryKey)] = Source.[$($PrimaryKey)]
 WHEN NOT MATCHED THEN
-INSERT ($InsertColumns) VALUES ($InsertValues)
+    INSERT ($InsertColumns) VALUES ($InsertValues)
 $(#If condition to see if we actually need a Update Condition
 if ($UpdateCondition -notlike $null) {
 "WHEN MATCHED $(if ($UpdateConditionWhenMatched) {$UpdateConditionWhenMatched})
-THEN UPDATE SET $UpdateCondition"})
+    THEN UPDATE SET $UpdateCondition"})
 WHEN NOT MATCHED BY Source $MergeCondition THEN
-DELETE;
+    DELETE;
 "@
 $SQLQuery | clip
