@@ -108,3 +108,21 @@ WHEN NOT MATCHED BY Source $MergeCondition THEN
     DELETE;
 "@
 $SQLQuery | clip
+
+#Output Code Indention, indenting my here string
+function Get-IHateMySelf {
+    $SQLQuery = @"
+    MERGE INTO $($Target) WITH (READPAST) AS Target
+    USING $($Target)_$($UniqueIdentifier)_TEMP AS Source
+    ON Target.[$($PrimaryKey)] = Source.[$($PrimaryKey)]
+    WHEN NOT MATCHED THEN
+        INSERT ($InsertColumns) VALUES ($InsertValues)
+    $(#If condition to see if we actually need a Update Condition
+    if ($UpdateCondition -notlike $null) {
+    "WHEN MATCHED $(if ($UpdateConditionWhenMatched) {$UpdateConditionWhenMatched})
+        THEN UPDATE SET $UpdateCondition"})
+    WHEN NOT MATCHED BY Source $MergeCondition THEN
+        DELETE;
+    "@ #Whitespace is not allowed before the string terminator
+    $SQLQuery | clip
+    }
