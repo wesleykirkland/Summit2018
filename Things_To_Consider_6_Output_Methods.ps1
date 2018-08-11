@@ -64,6 +64,20 @@ do {
     }
     [void]$Results.Add(($ArrayListMeasure | Select-Object @{Name='Type';Expression={'ArrayList_Void'}},Minutes,Seconds,Milliseconds))
 
+    #ArrayList null
+    $ArrayListMeasure = Measure-Command {
+        [System.Collections.ArrayList]$ArrayList = @()
+        $null = $ArrayList.Add("Write-Output 'Let the puppy killing commence'")
+        $null = $ArrayList.Add("Write-Output 'pause'")
+
+        foreach ($Num in 1..5000) {
+            $string = 'Write-Host -ForegroundColor {0} -BackgroundColor {1} {2}' -f ($Colors | Get-Random),($Colors | Get-Random),$Num
+            $null = $ArrayList.Add($string)
+        }
+    }
+    [void]$Results.Add(($ArrayListMeasure | Select-Object @{Name='Type';Expression={'ArrayList_null'}},Minutes,Seconds,Milliseconds))
+
+
     #These are slow as can be/not demo suitable
     <#
     #File System
